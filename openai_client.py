@@ -1,7 +1,10 @@
 import json
 import os
+import random
 import requests
+import uuid
 from typing import Dict, Any
+from datetime import datetime
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -57,11 +60,11 @@ class OpenAIClient:
                         "type": random.choice(["fake_file", "honeypot_service", "decoy_user"]),
                         "target": "unknown",
                         "details": "Simulated decoy",
-                        "created_at": datetime.now().isoformat()
+                        "created_at": datetime.datetime.now().isoformat()
                     },
                     "pattern": {                          # For PatternAnalyzer
                         "id": str(uuid.uuid4()),
-                        "timestamp": datetime.now().isoformat(),
+                        "timestamp": datetime.datetime.now().isoformat(),
                         "details": "Simulated pattern",
                         "common_sources": []
                     }

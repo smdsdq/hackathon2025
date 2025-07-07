@@ -12,7 +12,7 @@ class DecoyImplementer:
         deployment = {
             "decoy_id": decoy["id"],
             "status": "deployed",
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.datetime.now().isoformat(),
             "details": f"Deployed {decoy['type']} to target {decoy['target']}"
         }
         self.deployed_decoys.append(deployment)

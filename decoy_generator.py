@@ -20,23 +20,33 @@ class DecoyGenerator:
         Return a JSON object with keys: id, type, target, details, created_at.
         """
         response = self.openai_client.send_prompt(prompt, max_tokens=100, temperature=0.5)
-        # Simulated response parsing
         if "error" in response:
             decoy = {
                 "id": str(uuid.uuid4()),
                 "type": "fallback_decoy",
                 "target": threat.get("source_ip", "unknown"),
                 "details": "Fallback decoy due to API failure",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.datetime.now().isoformat()
             }
         else:
-            decoy_type = random.choice(["fake_file", "honeypot_service", "decoy_user"])
-            decoy = {
-                "id": str(uuid.uuid4()),
-                "type": decoy_type,
-                "target": threat.get("source_ip", "unknown"),
-                "details": f"Decoy {decoy_type} for {threat.get('details', 'unknown')}",
-                "created_at": datetime.now().isoformat()
-            }
+            response_data = response.get("response", {})
+            if not isinstance(response_data, dict):
+                print(f"Unexpected response type: {type(response_data)}")
+                decoy_type = random.choice(["fake_file", "honeypot_service", "decoy_user"])
+                decoy = {
+                    "id": str(uuid.uuid4()),
+                    "type": decoy_type,
+                    "target": threat.get("source_ip", "unknown"),
+                    "details": f"Decoy {decoy_type} for {threat.get('details', 'unknown')}",
+                    "created_at": datetime.datetime.now().isoformat()
+                }
+            else:
+                decoy = response_data.get("decoy", {
+                    "id": str(uuid.uuid4()),
+                    "type": random.choice(["fake_file", "honeypot_service", "decoy_user"]),
+                    "target": threat.get("source_ip", "unknown"),
+                    "details": f"Decoy for {threat.get('details', 'unknown')}",
+                    "created_at": datetime.datetime.now().isoformat()
+                })
         self.decoys.append(decoy)
         return decoy

@@ -18,7 +18,7 @@ class DataGatherer:
             mock_response = [
                 {
                     "id": str(uuid.uuid4()),
-                    "timestamp": datetime.now().isoformat(),
+                    "timestamp": datetime.datetime.now().isoformat(),
                     "source_ip": f"192.168.1.{random.randint(1, 255)}",
                     "destination_ip": f"192.168.1.{random.randint(1, 255)}",
                     "port": random.randint(1, 65535),

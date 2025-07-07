@@ -20,12 +20,20 @@ class AIValidator:
         Return a JSON object with a single key 'is_valid' set to true if the decoy is realistic, false otherwise.
         """
         response = self.openai_client.send_prompt(prompt, max_tokens=50, temperature=0.3)
-        # Simulated response parsing
-        is_valid = response.get("response", {}).get("is_valid", random.random() > 0.2)
+        if "error" in response:
+            print(f"Error in decoy validation: {response['error']}")
+            is_valid = False
+        else:
+            response_data = response.get("response", {})
+            if not isinstance(response_data, dict):
+                print(f"Unexpected response type: {type(response_data)}")
+                is_valid = random.random() > 0.2
+            else:
+                is_valid = response_data.get("is_valid", random.random() > 0.2)
         result = {
             "decoy_id": decoy["id"],
             "is_valid": is_valid,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.datetime.now().isoformat(),
             "details": f"Validation {'successful' if is_valid else 'failed'} for {decoy['type']}"
         }
         self.validation_results.append(result)

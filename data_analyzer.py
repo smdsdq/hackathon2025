@@ -18,7 +18,7 @@ class DataAnalyzer:
                 if self._is_anomaly(entry):
                     threat = {
                         "id": str(uuid.uuid4()),
-                        "timestamp": datetime.now().isoformat(),
+                        "timestamp": datetime.datetime.now().isoformat(),
                         "details": f"Anomaly detected: {entry}",
                         "severity": random.choice(["low", "medium", "high"])
                     }

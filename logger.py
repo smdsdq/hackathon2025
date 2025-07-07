@@ -12,7 +12,7 @@ class Logger:
         """Logs events to a file or system."""
         log_entry = {
             "id": str(uuid.uuid4()),
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.datetime.now().isoformat(),
             "event": event
         }
         self.logs.append(log_entry)
@@ -21,7 +21,7 @@ class Logger:
         """Responds to a detected threat."""
         response = {
             "alert_id": alert["id"],
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.datetime.now().isoformat(),
             "action": random.choice(["block_ip", "alert_admin", "isolate_system"]),
             "details": f"Responded to {alert['details']}"
         }

@@ -20,20 +20,30 @@ class PatternAnalyzer:
         Return a JSON object with keys: id, timestamp, details, common_sources.
         """
         response = self.openai_client.send_prompt(prompt, max_tokens=100, temperature=0.5)
-        # Simulated response parsing
         if "error" in response:
+            print(f"Error in pattern analysis: {response['error']}")
             pattern = {
                 "id": str(uuid.uuid4()),
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.datetime.now().isoformat(),
                 "details": "Fallback pattern due to API failure",
                 "common_sources": []
             }
         else:
-            pattern = {
-                "id": str(uuid.uuid4()),
-                "timestamp": datetime.now().isoformat(),
-                "details": f"Found {len(threats)} threats and {len(alerts)} alerts",
-                "common_sources": [t.get("source_ip", "unknown") for t in threats[:3]]
-            }
+            response_data = response.get("response", {})
+            if not isinstance(response_data, dict):
+                print(f"Unexpected response type: {type(response_data)}")
+                pattern = {
+                    "id": str(uuid.uuid4()),
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "details": "Fallback pattern due to unexpected response",
+                    "common_sources": []
+                }
+            else:
+                pattern = response_data.get("pattern", {
+                    "id": str(uuid.uuid4()),
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "details": f"Found {len(threats)} threats and {len(alerts)} alerts",
+                    "common_sources": [t.get("source_ip", "unknown") for t in threats[:3]]
+                })
         self.patterns.append(pattern)
         return self.patterns

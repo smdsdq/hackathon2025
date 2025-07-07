@@ -21,12 +21,18 @@ class HackMonitor:
             Return a JSON object with a single key 'is_accessed' set to true if unauthorized access is detected, false otherwise.
             """
             response = self.openai_client.send_prompt(prompt, max_tokens=50, temperature=0.3)
-            # Simulated response parsing
-            if response.get("response", {}).get("is_accessed", random.random() > 0.7):
+            if "error" in response:
+                print(f"Error in decoy monitoring: {response['error']}")
+                continue
+            response_data = response.get("response", {})
+            if not isinstance(response_data, dict):
+                print(f"Unexpected response type: {type(response_data)}")
+                continue
+            if response_data.get("is_accessed", random.random() > 0.7):
                 alert = {
                     "id": str(uuid.uuid4()),
                     "decoy_id": decoy["decoy_id"],
-                    "timestamp": datetime.now().isoformat(),
+                    "timestamp": datetime.datetime.now().isoformat(),
                     "details": f"Unauthorized access detected on {decoy['details']}"
                 }
                 self.alerts.append(alert)
