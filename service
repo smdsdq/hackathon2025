@@ -1,0 +1,16 @@
+[Unit] 
+Description=Deception Technology Toolkit Service 
+After=network.target
+
+[Service] 
+WorkingDirectory=/path/to/project_directory 
+Environment="ENCRYPTED_API_KEY=your-encrypted-api-key" 
+Environment="ENCRYPTION_KEY=your-secure-passphrase" 
+Environment="AZURE_ENDPOINT=https://your-azure-openai-endpoint" 
+Environment="API_ENDPOINT=https://example.com/api" 
+ExecStart=/usr/bin/python3 /path/to/project_directory/main.py 
+Restart=always 
+RestartSec=10
+
+[Install] 
+WantedBy=multi-user.target
