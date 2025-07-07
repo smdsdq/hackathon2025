@@ -24,7 +24,6 @@ class OpenAIClient:
             raise ValueError("Encrypted API key and encryption key must be provided.")
         
         try:
-            # Derive a Fernet key from the encryption key
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
                 length=32,
@@ -33,7 +32,6 @@ class OpenAIClient:
             )
             key = base64.urlsafe_b64encode(kdf.derive(encryption_key.encode()))
             fernet = Fernet(key)
-            # Decrypt the API key
             decrypted_key = fernet.decrypt(encrypted_api_key.encode()).decode()
             return decrypted_key
         except Exception as e:
@@ -47,10 +45,29 @@ class OpenAIClient:
                 "max_tokens": max_tokens,
                 "temperature": temperature
             }
-            # Simulated response (replace with actual API call in production)
-            # response = requests.post(self.azure_endpoint, headers=self.headers, json=payload)
-            # return response.json()
-            return {"response": "Simulated response"}  # Placeholder
+            # Simulated response for testing (ensures consistent dictionary format)
+            # In production, replace with: response = requests.post(self.azure_endpoint, headers=self.headers, json=payload)
+            simulated_response = {
+                "response": {
+                    "is_anomaly": random.random() > 0.3,  # For DataAnalyzer
+                    "is_valid": random.random() > 0.2,    # For AIValidator
+                    "is_accessed": random.random() > 0.7, # For HackMonitor
+                    "decoy": {                            # For DecoyGenerator
+                        "id": str(uuid.uuid4()),
+                        "type": random.choice(["fake_file", "honeypot_service", "decoy_user"]),
+                        "target": "unknown",
+                        "details": "Simulated decoy",
+                        "created_at": datetime.now().isoformat()
+                    },
+                    "pattern": {                          # For PatternAnalyzer
+                        "id": str(uuid.uuid4()),
+                        "timestamp": datetime.now().isoformat(),
+                        "details": "Simulated pattern",
+                        "common_sources": []
+                    }
+                }
+            }
+            return simulated_response
         except requests.RequestException as e:
             print(f"Azure OpenAI API call failed: {str(e)}")
             return {"error": str(e)}
@@ -59,7 +76,6 @@ class OpenAIClient:
     def encrypt_api_key(api_key: str, encryption_key: str) -> str:
         """Encrypts an API key using the provided encryption key."""
         try:
-            # Derive a Fernet key from the encryption key
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
                 length=32,
@@ -68,7 +84,6 @@ class OpenAIClient:
             )
             key = base64.urlsafe_b64encode(kdf.derive(encryption_key.encode()))
             fernet = Fernet(key)
-            # Encrypt the API key
             encrypted_key = fernet.encrypt(api_key.encode()).decode()
             return encrypted_key
         except Exception as e:

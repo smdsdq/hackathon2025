@@ -34,5 +34,12 @@ class DataAnalyzer:
         Return a JSON object with a single key 'is_anomaly' set to true if the event is an anomaly, false otherwise.
         """
         response = self.openai_client.send_prompt(prompt, max_tokens=50, temperature=0.3)
-        # Simulated response parsing
-        return response.get("response", {}).get("is_anomaly", random.random() > 0.3)
+        # Handle response safely
+        if "error" in response:
+            print(f"Error in anomaly detection: {response['error']}")
+            return False
+        response_data = response.get("response", {})
+        if not isinstance(response_data, dict):
+            print(f"Unexpected response type: {type(response_data)}")
+            return random.random() > 0.3  # Fallback
+        return response_data.get("is_anomaly", random.random() > 0.3)
