@@ -1,0 +1,5 @@
+from openai_client import OpenAIClient
+api_key = "your-actual-azure-openai-api-key"
+encryption_key = "your-secure-passphrase"  # Choose a strong passphrase
+encrypted_key = OpenAIClient.encrypt_api_key(api_key, encryption_key)
+print(encrypted_key)
