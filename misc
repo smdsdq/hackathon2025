@@ -1,0 +1,3 @@
+fastapi==0.115.2 uvicorn==0.32.0 pydantic==2.9.2 requests==2.32.3 cryptography==43.0.1
+export ENCRYPTED_API_KEY="your-encrypted-key"
+export ENCRYPTION_KEY="your-secure-passphrase"
